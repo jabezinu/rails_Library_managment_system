@@ -1,40 +1,24 @@
 Rails.application.routes.draw do
-  get "borrowings/index"
-  get "borrowings/show"
-  get "borrowings/new"
-  get "borrowings/create"
-  get "borrowings/return"
-  get "students/index"
-  get "students/show"
-  get "students/new"
-  get "students/create"
-  get "students/edit"
-  get "students/update"
-  get "students/destroy"
-  get "books/index"
-  get "books/show"
-  get "books/new"
-  get "books/create"
-  get "books/edit"
-  get "books/update"
-  get "books/destroy"
-  get "categories/index"
-  get "categories/show"
-  get "categories/new"
-  get "categories/create"
-  get "categories/edit"
-  get "categories/update"
-  get "categories/destroy"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  root "books#index"
+  
+  resources :categories
+  resources :books do
+    member do
+      post :borrow
+    end
+  end
+  resources :students
+  resources :borrowings, only: [:index, :show, :new, :create] do
+    member do
+      patch :return_book
+    end
+  end
+  
+  # Additional routes for library management
+  get "out_of_stock_books", to: "books#out_of_stock"
+  get "active_borrowings", to: "borrowings#active"
+  get "borrowing_history", to: "borrowings#history"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
