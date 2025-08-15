@@ -1,2 +1,108 @@
-<h1>Borrowings#index</h1>
-<p>Find me in app/views/borrowings/index.html.erb</p>
+<% content_for :title, "Borrowings" %>
+
+<div class="page-header">
+  <h1>Book Borrowings</h1>
+  <%= link_to "New Borrowing", new_borrowing_path, class: "btn btn-primary" %>
+</div>
+
+<div class="borrowings-tabs">
+  <div class="tab-buttons">
+    <button class="tab-button active" onclick="showTab('active')">Active Borrowings</button>
+    <button class="tab-button" onclick="showTab('returned')">Recently Returned</button>
+  </div>
+  
+  <div id="active-tab" class="tab-content active">
+    <h3>Active Borrowings (<%= @active_borrowings.count %>)</h3>
+    <% if @active_borrowings.any? %>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Book</th>
+              <th>Author</th>
+              <th>Borrowed Date</th>
+              <th>Days Borrowed</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @active_borrowings.each do |borrowing| %>
+              <tr>
+                <td><%= link_to borrowing.student.name, borrowing.student %></td>
+                <td><%= link_to borrowing.book.title, borrowing.book %></td>
+                <td><%= borrowing.book.author %></td>
+                <td><%= borrowing.borrowed_at.strftime("%B %d, %Y") %></td>
+                <td><%= (Date.current - borrowing.borrowed_at.to_date).to_i %> days</td>
+                <td class="actions">
+                  <%= link_to "View", borrowing, class: "btn btn-sm" %>
+                  <%= link_to "Return Book", return_book_borrowing_path(borrowing), 
+                              method: :patch, class: "btn btn-sm btn-success",
+                              confirm: "Mark this book as returned?" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <p>No active borrowings.</p>
+      </div>
+    <% end %>
+  </div>
+  
+  <div id="returned-tab" class="tab-content">
+    <h3>Recently Returned Books</h3>
+    <% if @returned_borrowings.any? %>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Book</th>
+              <th>Author</th>
+              <th>Borrowed Date</th>
+              <th>Returned Date</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @returned_borrowings.each do |borrowing| %>
+              <tr>
+                <td><%= link_to borrowing.student.name, borrowing.student %></td>
+                <td><%= link_to borrowing.book.title, borrowing.book %></td>
+                <td><%= borrowing.book.author %></td>
+                <td><%= borrowing.borrowed_at.strftime("%B %d, %Y") %></td>
+                <td><%= borrowing.returned_at.strftime("%B %d, %Y") %></td>
+                <td><%= (borrowing.returned_at.to_date - borrowing.borrowed_at.to_date).to_i %> days</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <p>No returned books yet.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function showTab(tabName) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Remove active class from all buttons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active');
+  });
+  
+  // Show selected tab and mark button as active
+  document.getElementById(tabName + '-tab').classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

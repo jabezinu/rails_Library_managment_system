@@ -1,2 +1,34 @@
-<h1>Categories#index</h1>
-<p>Find me in app/views/categories/index.html.erb</p>
+<% content_for :title, "Categories" %>
+
+<div class="page-header">
+  <h1>Book Categories</h1>
+  <%= link_to "Add New Category", new_category_path, class: "btn btn-primary" %>
+</div>
+
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Books Count</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @categories.each do |category| %>
+        <tr>
+          <td><%= link_to category.name, category %></td>
+          <td><%= truncate(category.description, length: 100) %></td>
+          <td><%= category.books.count %></td>
+          <td class="actions">
+            <%= link_to "View", category, class: "btn btn-sm" %>
+            <%= link_to "Edit", edit_category_path(category), class: "btn btn-sm" %>
+            <%= link_to "Delete", category, method: :delete, 
+                        confirm: "Are you sure?", class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

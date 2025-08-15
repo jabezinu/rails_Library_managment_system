@@ -1,0 +1,47 @@
+<% content_for :title, "Out of Stock Books" %>
+
+<div class="page-header">
+  <h1>Out of Stock Books</h1>
+  <%= link_to "Back to Books", books_path, class: "btn" %>
+</div>
+
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th>Borrowed By</th>
+        <th>Borrowed Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @books.each do |book| %>
+        <% current_borrowing = book.borrowings.active.first %>
+        <tr>
+          <td><%= link_to book.title, book %></td>
+          <td><%= book.author %></td>
+          <td><%= book.category.name %></td>
+          <td><%= current_borrowing&.student&.name %></td>
+          <td><%= current_borrowing&.borrowed_at&.strftime("%B %d, %Y") %></td>
+          <td class="actions">
+            <%= link_to "View", book, class: "btn btn-sm" %>
+            <% if current_borrowing %>
+              <%= link_to "Return Book", return_book_borrowing_path(current_borrowing), 
+                          method: :patch, class: "btn btn-sm btn-success",
+                          confirm: "Mark this book as returned?" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+  <% if @books.empty? %>
+    <div class="empty-state">
+      <p>All books are currently available!</p>
+    </div>
+  <% end %>
+</div>

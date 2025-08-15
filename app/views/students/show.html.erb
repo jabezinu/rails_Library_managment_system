@@ -1,2 +1,87 @@
-<h1>Students#show</h1>
-<p>Find me in app/views/students/show.html.erb</p>
+<% content_for :title, @student.name %>
+
+<div class="page-header">
+  <h1><%= @student.name %></h1>
+  <div class="actions">
+    <%= link_to "Edit", edit_student_path(@student), class: "btn btn-primary" %>
+    <%= link_to "Back to Students", students_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="student-details">
+  <div class="detail-card">
+    <h3>Student Information</h3>
+    <p><strong>Name:</strong> <%= @student.name %></p>
+    <p><strong>Student ID:</strong> <%= @student.student_id %></p>
+    <p><strong>Email:</strong> <%= @student.email %></p>
+    <p><strong>Active Borrowings:</strong> <%= @active_borrowings.count %></p>
+  </div>
+</div>
+
+<div class="borrowings-section">
+  <h3>Active Borrowings</h3>
+  <% if @active_borrowings.any? %>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>Author</th>
+            <th>Borrowed Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @active_borrowings.each do |borrowing| %>
+            <tr>
+              <td><%= link_to borrowing.book.title, borrowing.book %></td>
+              <td><%= borrowing.book.author %></td>
+              <td><%= borrowing.borrowed_at.strftime("%B %d, %Y") %></td>
+              <td class="actions">
+                <%= link_to "Return Book", return_book_borrowing_path(borrowing), 
+                            method: :patch, class: "btn btn-sm btn-success",
+                            confirm: "Mark this book as returned?" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>No active borrowings.</p>
+    </div>
+  <% end %>
+</div>
+
+<div class="history-section">
+  <h3>Borrowing History</h3>
+  <% if @borrowing_history.any? %>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>Author</th>
+            <th>Borrowed Date</th>
+            <th>Returned Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @borrowing_history.limit(10).each do |borrowing| %>
+            <tr>
+              <td><%= link_to borrowing.book.title, borrowing.book %></td>
+              <td><%= borrowing.book.author %></td>
+              <td><%= borrowing.borrowed_at.strftime("%B %d, %Y") %></td>
+              <td><%= borrowing.returned_at.strftime("%B %d, %Y") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>No borrowing history yet.</p>
+    </div>
+  <% end %>
+</div>
