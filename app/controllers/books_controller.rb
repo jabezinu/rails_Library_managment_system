@@ -46,17 +46,13 @@ class BooksController < ApplicationController
   end
 
   def borrow
-    @students = Student.all
+    student = Student.find(params[:student_id])
+    borrowing = @book.borrowings.build(student: student)
     
-    if request.post?
-      student = Student.find(params[:student_id])
-      borrowing = @book.borrowings.build(student: student)
-      
-      if borrowing.save
-        redirect_to @book, notice: "Book successfully borrowed by #{student.name}."
-      else
-        redirect_to @book, alert: borrowing.errors.full_messages.join(', ')
-      end
+    if borrowing.save
+      redirect_to @book, notice: "Book successfully borrowed by #{student.name}."
+    else
+      redirect_to @book, alert: borrowing.errors.full_messages.join(', ')
     end
   end
 
