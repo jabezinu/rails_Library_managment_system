@@ -1,2 +1,62 @@
-<h1>Borrowings#new</h1>
-<p>Find me in app/views/borrowings/new.html.erb</p>
+<% content_for :title, "New Borrowing" %>
+
+<div class="page-header">
+  <h1>New Book Borrowing</h1>
+  <%= link_to "Back to Borrowings", borrowings_path, class: "btn" %>
+</div>
+
+<div class="form-container">
+  <%= form_with model: @borrowing, local: true do |form| %>
+    <% if @borrowing.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@borrowing.errors.count, "error") %> prohibited this borrowing from being saved:</h4>
+        <ul>
+          <% @borrowing.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= form.label :student_id, "Student" %>
+      <%= form.select :student_id, options_from_collection_for_select(@students, :id, :name), 
+                      { prompt: "Select a student..." }, { class: "form-control" } %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :book_id, "Available Book" %>
+      <%= form.select :book_id, 
+                      grouped_options_for_select(
+                        @available_books.group_by(&:category).map do |category, books|
+                          [category.name, books.map { |book| ["#{book.title} by #{book.author}", book.id] }]
+                        end
+                      ), 
+                      { prompt: "Select a book..." }, { class: "form-control" } %>
+    </div>
+
+    <div class="form-actions">
+      <%= form.submit "Create Borrowing", class: "btn btn-primary" %>
+      <%= link_to "Cancel", borrowings_path, class: "btn" %>
+    </div>
+  <% end %>
+</div>
+
+<div class="info-section">
+  <h3>Available Books (<%= @available_books.count %>)</h3>
+  <% if @available_books.any? %>
+    <div class="books-grid">
+      <% @available_books.limit(6).each do |book| %>
+        <div class="book-card">
+          <h4><%= book.title %></h4>
+          <p>by <%= book.author %></p>
+          <p class="category"><%= book.category.name %></p>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <p>No books available for borrowing.</p>
+    </div>
+  <% end %>
+</div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Sims 0" %></title>
+    <title><%= content_for(:title) || "Library Management System" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -23,6 +23,28 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav class="navbar">
+      <div class="nav-container">
+        <%= link_to "Library Management", root_path, class: "nav-brand" %>
+        <div class="nav-links">
+          <%= link_to "Books", books_path %>
+          <%= link_to "Categories", categories_path %>
+          <%= link_to "Students", students_path %>
+          <%= link_to "Borrowings", borrowings_path %>
+          <%= link_to "Out of Stock", out_of_stock_books_path %>
+        </div>
+      </div>
+    </nav>
+    
+    <main class="container">
+      <% if notice %>
+        <div class="alert alert-success"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-danger"><%= alert %></div>
+      <% end %>
+      
+      <%= yield %>
+    </main>
   </body>
 </html>

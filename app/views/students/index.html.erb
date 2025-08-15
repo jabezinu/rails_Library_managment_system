@@ -1,2 +1,36 @@
-<h1>Students#index</h1>
-<p>Find me in app/views/students/index.html.erb</p>
+<% content_for :title, "Students" %>
+
+<div class="page-header">
+  <h1>Registered Students</h1>
+  <%= link_to "Register New Student", new_student_path, class: "btn btn-primary" %>
+</div>
+
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Student ID</th>
+        <th>Email</th>
+        <th>Active Borrowings</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @students.each do |student| %>
+        <tr>
+          <td><%= link_to student.name, student %></td>
+          <td><%= student.student_id %></td>
+          <td><%= student.email %></td>
+          <td><%= student.active_borrowings.count %></td>
+          <td class="actions">
+            <%= link_to "View", student, class: "btn btn-sm" %>
+            <%= link_to "Edit", edit_student_path(student), class: "btn btn-sm" %>
+            <%= link_to "Delete", student, method: :delete, 
+                        confirm: "Are you sure?", class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

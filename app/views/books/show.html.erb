@@ -1,2 +1,41 @@
-<h1>Books#show</h1>
-<p>Find me in app/views/books/show.html.erb</p>
+<% content_for :title, @book.title %>
+
+<div class="page-header">
+  <h1><%= @book.title %></h1>
+  <div class="actions">
+    <%= link_to "Edit", edit_book_path(@book), class: "btn btn-primary" %>
+    <%= link_to "Back to Books", books_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="book-details">
+  <div class="detail-card">
+    <h3>Book Information</h3>
+    <p><strong>Author:</strong> <%= @book.author %></p>
+    <p><strong>ISBN:</strong> <%= @book.isbn %></p>
+    <p><strong>Category:</strong> <%= @book.category.name %></p>
+    <p><strong>Status:</strong> 
+      <span class="status <%= @book.available? ? 'available' : 'borrowed' %>">
+        <%= @book.available? ? 'Available' : 'Borrowed' %>
+      </span>
+    </p>
+    
+    <% if @current_borrower %>
+      <p><strong>Currently borrowed by:</strong> <%= @current_borrower.name %></p>
+    <% end %>
+  </div>
+  
+  <% if @book.available? %>
+    <div class="borrow-section">
+      <h3>Borrow This Book</h3>
+      <%= form_with url: borrow_book_path(@book), method: :post, local: true do |form| %>
+        <div class="form-group">
+          <%= form.label :student_id, "Select Student:" %>
+          <%= form.select :student_id, options_from_collection_for_select(Student.all, :id, :name), 
+                          { prompt: "Choose a student..." }, { class: "form-control" } %>
+        </div>
+        <%= form.submit "Borrow Book", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
