@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get "borrowings/index"
+  get "borrowings/show"
+  get "borrowings/new"
+  get "borrowings/create"
+  get "borrowings/return"
   get "students/index"
   get "students/show"
   get "students/new"
